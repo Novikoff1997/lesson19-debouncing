@@ -1,29 +1,28 @@
 "use strict";
 
 const input = document.querySelector("input");
-const p = document.querySelector("p");
+const div = document.querySelector("div");
+const textStorage = [];
 
 const debounce = (func, wait) => {
   let timeout;
-
-  return (...args) => {
-    const later = () => {
-      clearTimeout(timeout);
-      func.apply(this, args);
-    };
-
+  return () => {
     clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+    timeout = setTimeout(func, wait);
   };
 };
 
 const setText = debounce(() => {
-  p.textContent = input.value;
+  textStorage.push(input.value);
+  div.innerHTML = "";
+  let p = document.createElement("p");
+  textStorage.forEach((element) => {
+    p.textContent = element;
+    document.body.appendChild(p);
+  });
   input.value = "";
 }, 300);
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    setText();
-  }
+input.addEventListener("input", () => {
+  setText();
 });
